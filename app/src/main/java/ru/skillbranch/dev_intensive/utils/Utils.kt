@@ -12,7 +12,7 @@ object Utils {
         return firstName to lastName
     }
 
-    fun transliteration(payload: String,divider:String = "_"): String {
+    fun transliteration(payload: String,divider:String = " "): String {
         val alphavit: HashMap<String, String> = hashMapOf(
             "а" to "a",
             "б" to "b",
