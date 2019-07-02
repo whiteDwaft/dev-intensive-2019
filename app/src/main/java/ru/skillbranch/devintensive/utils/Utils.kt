@@ -64,28 +64,24 @@ object Utils {
 
 
 
-    fun toInitials(firstName: String?, lastName: String?): String {
+    fun toInitials(firstName: String?, lastName: String?): String? {
         var init:StringBuilder = StringBuilder()
-        when(firstName){
-            null -> {}
+        when(firstName?.trim()){
+            null -> init.append(lastName)
             "" -> {}
             else -> init.append(firstName.substring(0,1).toUpperCase())
         }
-        when(lastName){
+        when(lastName?.trim()){
             null -> {}
             "" -> {}
-            else -> init.append(lastName.substring(0,1).toUpperCase())
+            else -> if(init.toString().equals("$lastName"))
+                init.append(" $lastName")
+                else init.append(lastName.substring(0,1).toUpperCase())
         }
-        if(/*init.contains(Regex("""^\w""")) ||*/ init.trim().length == 0)
-            return "null"
+        if(/*init.contains(Regex("""^\w""")) ||*/ init.isEmpty())
+            return null
         else
             return init.toString()
-
-//        if (firstName != null && lastName == null) {
-//            return firstName.substring(0,1).toUpperCase()+lastName.substring(0,1).toUpperCase()
-//        }
-//        else if(firstName != null || lastName != null)
-//            return "nullnull"
     }
 
 }
