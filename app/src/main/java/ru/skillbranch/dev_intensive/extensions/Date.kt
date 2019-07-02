@@ -30,11 +30,11 @@ fun Date.add(value:Int, units: TimeUnits = TimeUnits.SECOND):Date{
 fun Date.humanizeDiff(date: Date = Date()): String {
     val diff:Long = date.time - this.time
     val map:HashMap<String,Long> = HashMap()
-    map.put("YEARS", diff/1000/60/60/24/365)
-    map.put("DAYS",diff/1000/60/60/24)
-    map.put("HOURS", diff/1000/60/60)
-    map.put("MINUTES",diff/1000/60)
-    map.put("SECONDS",diff/1000)
+    map.put("YEARS", Math.abs(diff)/1000/60/60/24/365)
+    map.put("DAYS",Math.abs(diff)/1000/60/60/24)
+    map.put("HOURS", Math.abs(diff)/1000/60/60)
+    map.put("MINUTES",Math.abs(diff)/1000/60)
+    map.put("SECONDS",Math.abs(diff)/1000)
 
     val vocabulary:HashMap<String,Array<String>> = HashMap()
     vocabulary.put("YEARS",arrayOf("год","года","лет"))
@@ -44,36 +44,80 @@ fun Date.humanizeDiff(date: Date = Date()): String {
     vocabulary.put("SECONDS",arrayOf("секунду","секунды","секунд"))
 
     val min:Map.Entry<String, Long>? = map.filter { (_,item:Long) -> item != 0L}.minBy { (_,item:Long) -> item}
-    when(min!!.value%10){
-        1L -> return "${min.value} ${vocabulary.get(min.key)?.get(0)} назад"
-        in 2L..4L -> return "${min.value} ${vocabulary.get(min.key)?.get(1)} назад"
-        else -> return "${min.value} ${vocabulary.get(min.key)?.get(2)} назад"
+    if(diff > 0) {
+        when (min!!.key) {
+            "SECONDS" -> when (min.value) {
+                in 0L..1L -> return "только что"
+                in 2L..45L -> return "несколько секунд назад"
+                else -> return "минуту назад"
+            }
+            "MINUTES" -> when (min.value) {
+                1L -> if(map.get("SECONDS")!! <= 75) return "минуту назад" else return "1 минуту назад"
+                in 2L..45L -> when (min.value % 10) {
+                    1L -> return "${min.value} ${vocabulary.get(min.key)?.get(0)} назад"
+                    in 2L..4L -> return "${min.value} ${vocabulary.get(min.key)?.get(1)} назад"
+                    else -> return "${min.value} ${vocabulary.get(min.key)?.get(2)} назад"
+                }
+                else -> return "час назад"
+            }
+            "HOURS" -> when (min.value) {
+                1L -> if(map.get("MINUTES")!! <= 75) return "час назад" else return "1 час назад"
+                in 2L..22L -> when (min.value % 10) {
+                    1L -> return "${min.value} ${vocabulary.get(min.key)?.get(0)} назад"
+                    in 2L..4L -> return "${min.value} ${vocabulary.get(min.key)?.get(1)} назад"
+                    else -> return "${min.value} ${vocabulary.get(min.key)?.get(2)} назад"
+                }
+                else -> return "день назад"
+            }
+            "DAYS" -> when (min.value) {
+                1L -> if(map.get("HOURS")!! <= 26) return "день назад" else return "1 день назад"
+                in 2L..360L -> when (min.value % 10) {
+                    1L -> return "${min.value} ${vocabulary.get(min.key)?.get(0)} назад"
+                    in 2L..4L -> return "${min.value} ${vocabulary.get(min.key)?.get(1)} назад"
+                    else -> return "${min.value} ${vocabulary.get(min.key)?.get(2)} назад"
+                }
+                else -> return "более года назад"
+            }
+            else -> return "более года назад"
+        }
     }
-//    return "${min!!.value} ${min!!.key}"
-
-//    val lists: List<String> = this.format().split(" ")
-//    val timeList:List<String> = lists.get(0).split(":")
-//    val dateList:List<String> = lists.get(1).split(".")
-
-//    val iterator:Iterator<String> = list.iterator()
-//    while(iterator.hasNext() && iterator.equals("00"))
-//        iterator.next()
-//    when(iterator.)
-//    {
-//        1 -> return "год назад"
-//        0 ->
-//        else-> return "более года назад"
-//    }
-//    val x:Long = date.time - this.time
-//    when(x)
-//    {
-//        in 1..60000 -> return "несколько секунд назад"
-//        else -> when(x/60000){
-//            1 -> return "минуту назад"
-//            2..4 -> return "$x минуты назад"
-//            5
-//        }
-//    }
+    else {
+        when (min!!.key) {
+            "SECONDS" -> when (min.value) {
+                in 0L..1L -> return "только что"
+                in 2L..45L -> return "через несколько секунд "
+                else -> return "через минуту "
+            }
+            "MINUTES" -> when (min.value) {
+                1L -> if(map.get("SECONDS")!! <= 75) return "через минуту" else return "через 1 минуту"
+                in 2L..45L -> when (min.value % 10) {
+                    1L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(0)}"
+                    in 2L..4L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(1)}"
+                    else -> return "через ${min.value} ${vocabulary.get(min.key)?.get(2)}"
+                }
+                else -> return "через час"
+            }
+            "HOURS" -> when (min.value) {
+                1L -> if(map.get("MINUTES")!! <= 75) return "через час" else return "через 1 час"
+                in 2L..22L -> when (min.value % 10) {
+                    1L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(0)}"
+                    in 2L..4L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(1)}"
+                    else -> return "через ${min.value} ${vocabulary.get(min.key)?.get(2)}"
+                }
+                else -> return "через день"
+            }
+            "DAYS" -> when (min.value) {
+                1L -> if(map.get("HOURS")!! <= 26) return "через день" else return "через 1 день"
+                in 2L..360L -> when (min.value % 10) {
+                    1L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(0)}"
+                    in 2L..4L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(1)}"
+                    else -> return "через ${min.value} ${vocabulary.get(min.key)?.get(2)}"
+                }
+                else -> return "больше чем через год"
+            }
+            else -> return "более года назад"
+        }
+    }
 }
 enum class TimeUnits{
     SECOND,

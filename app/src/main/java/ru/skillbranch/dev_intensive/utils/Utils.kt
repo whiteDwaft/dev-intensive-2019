@@ -6,13 +6,16 @@ object Utils {
     fun parseFullName(fullname:String?):Pair<String?, String?>
     {
         val parts: List<String>? = fullname?.split(" ")
-
-        val firstName = parts?.getOrNull(0)
-        val lastName = parts?.getOrNull(1)
+        var firstName = parts?.getOrNull(0)
+        var lastName = parts?.getOrNull(1)
+        if(firstName.equals(""))
+            firstName = null
+        if(lastName.equals(""))
+            lastName = null
         return firstName to lastName
     }
 
-    fun transliteration(payload: String,divider:String = "_"): String {
+    fun transliteration(payload: String,divider:String = " "): String {
         val alphavit: HashMap<String, String> = hashMapOf(
             "а" to "a",
             "б" to "b",
@@ -72,7 +75,7 @@ object Utils {
             "" -> {}
             else -> init.append(lastName.substring(0,1).toUpperCase())
         }
-        if(init.length == 0)
+        if(init.contains(Regex("[^A-Z]")))
             return "null"
         else
             return init.toString()

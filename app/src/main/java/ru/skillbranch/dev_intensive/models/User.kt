@@ -8,27 +8,16 @@ import java.util.*
     var avatar: String?,
     var rating: Int = 0,
     var respect: Int = 0,
-    val lastVisit: Date? = null,
-    val isOnline: Boolean = false)
+    var lastVisit: Date? = Date(),
+    var isOnline: Boolean = false)
 {
 //    var introBit:String
 
     constructor(id:String,firstName: String?,lastName: String?) : this(id,firstName, lastName, null)
-    constructor(id:String):this(id, "john", "doe")
-    init {
-//        introBit = getIntro()
-        println("It's Alive!!! \n" +
-                " ${if(lastName==="doe") "His name is $firstName $lastName" else "And his name is $firstName $lastName!!!"}")
-    }
     companion object Factory{
         private var lastId: Int = -1
         fun makeUser(fullname:String?): User{
             lastId++
-
-//            val parts: List<String>? = fullname?.split(" ")
-//
-//            val firstName = parts?.getOrNull(0)
-//            val lastName = parts?.getOrNull(1)
             val (firstName, lastName) = Utils.parseFullName(fullname)
             return User("$lastId", firstName, lastName)
         }
@@ -58,26 +47,26 @@ import java.util.*
         }
 }
 
-//    private fun getIntro() = """
-//        tu tu tu tuuuuuuuu!!!
-//        tu tu tu tuuuuuuuuuu...
-//
-//        tu tu tu tuuuuuuuu!!!
-//        tu tu tu tuuuuuuuuuu...
-//
-//        ${"\n\n\n"}
-//        $firstName $lastName
-//    """.trimIndent()
-//
-//
-//    fun printMe() =println("""
-//    id: $id
-//    firstName: $firstName
-//    lastName:  $lastName
-//    avatar:   $avatar
-//    rating: $rating
-//    respect:  $respect
-//    lastVisit:  $lastVisit
-//    isOnline: $isOnline
-//        """)
+    private fun getIntro() = """
+        tu tu tu tuuuuuuuu!!!
+        tu tu tu tuuuuuuuuuu...
+
+        tu tu tu tuuuuuuuu!!!
+        tu tu tu tuuuuuuuuuu...
+
+        ${"\n\n\n"}
+        $firstName $lastName
+    """.trimIndent()
+
+
+    fun printMe() =println("""
+    id: $id
+    firstName: $firstName
+    lastName:  $lastName
+    avatar:   $avatar
+    rating: $rating
+    respect:  $respect
+    lastVisit:  $lastVisit
+    isOnline: $isOnline
+        """)
     }
