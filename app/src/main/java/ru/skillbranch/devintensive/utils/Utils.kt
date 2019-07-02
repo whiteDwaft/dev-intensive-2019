@@ -74,7 +74,7 @@ object Utils {
         when(lastName?.trim()){
             null -> {}
             "" -> {}
-            else -> if(init.toString().equals("$lastName"))
+            else -> if(firstName?.trim().equals(null))
                 init.append(" $lastName")
                 else init.append(lastName.substring(0,1).toUpperCase())
         }
