@@ -49,11 +49,14 @@ object Utils {
             "ю" to "yu",
             "я" to "ya",
             divider to divider
+//            Regex("[a-z]").toString() to Regex("[a-z]").toString()
         )
         val sep_fullname: List<String> = payload.split(" ")
         var nick: StringBuilder = StringBuilder(sep_fullname.get(0) + divider + sep_fullname.get(1))
         println(nick.toString())
-        val newnickList:List<String?> = nick.map { if(it.isUpperCase()) alphavit.get(it.toString().toLowerCase())?.toUpperCase() else alphavit.get(it.toString())}
+        val newnickList: List<String?> = nick.map {if(alphavit.get(it.toString()).equals(null)) it.toString() else if(it.isUpperCase())
+            alphavit.get(it.toString().toLowerCase())?.toUpperCase() else alphavit.get(it.toString())}
+//        val iterator:Iterator<String?> = newnickList.iterator()
         var newnickStr: StringBuilder = StringBuilder()
         newnickList.forEach{newnickStr.append(it)}
         return newnickStr.toString()
@@ -73,7 +76,7 @@ object Utils {
             "" -> {}
             else -> init.append(lastName.substring(0,1).toUpperCase())
         }
-        if(init.contains(Regex("[^A-Z]")))
+        if(init.contains(Regex("[^A-Z]|[^А-Я]")) || init.length == 0)
             return "null"
         else
             return init.toString()
