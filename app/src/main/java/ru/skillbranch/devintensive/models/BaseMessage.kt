@@ -1,7 +1,7 @@
-package ru.skillbranch.dev_intensive.models
+package ru.skillbranch.devintensive.models
 
-import ru.skillbranch.dev_intensive.extensions.TimeUnits
-import ru.skillbranch.dev_intensive.extensions.add
+import ru.skillbranch.devintensive.extensions.TimeUnits
+import ru.skillbranch.devintensive.extensions.add
 import java.util.*
 
 abstract class BaseMessage(

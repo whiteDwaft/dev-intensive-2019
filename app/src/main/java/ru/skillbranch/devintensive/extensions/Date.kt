@@ -1,6 +1,5 @@
-package ru.skillbranch.dev_intensive.extensions
+package ru.skillbranch.devintensive.extensions
 
-import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap

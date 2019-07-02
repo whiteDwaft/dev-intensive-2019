@@ -1,6 +1,4 @@
-package ru.skillbranch.dev_intensive.utils
-
-import java.text.CharacterIterator
+package ru.skillbranch.devintensive.utils
 
 object Utils {
     fun parseFullName(fullname:String?):Pair<String?, String?>
