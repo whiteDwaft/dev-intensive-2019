@@ -130,7 +130,7 @@ enum class TimeUnits{
         vocabulary.put("HOUR",arrayOf("час","часа","часов"))
         vocabulary.put("MINUTE",arrayOf("минуту","минуты","минут"))
         vocabulary.put("SECOND",arrayOf("секунду","секунды","секунд"))
-        when(num)
+        when(num%10)
         {
             1 -> return "$num ${vocabulary.get(this.name)!![0]}"
             in 2..4 -> return "$num ${vocabulary.get(this.name)!![1]}"

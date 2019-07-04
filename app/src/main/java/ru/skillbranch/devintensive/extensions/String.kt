@@ -2,11 +2,11 @@ package ru.skillbranch.devintensive.extensions
 
 fun String.truncate(count:Int = 16):String{
     try {
-        val sub = this.substring(0, count - 1)
+        val sub = this.substring(0, count)
         when(sub.equals(this))
         {
             true -> return this
-            else -> return sub.trimEnd().plus("...")
+            else -> if(sub.trimEnd().equals(this.trimEnd())) return this.trimEnd() else return sub.trimEnd().plus("...")
         }
     }
     catch(e:StringIndexOutOfBoundsException){
@@ -20,5 +20,5 @@ fun String.stripHtml():String{
     val list:List<String> =  this.split(Regex("<.+?>|&gt;|&lt;|&amp;|&quot;|&nbsp;| +"))
     var newnickStr: StringBuilder = StringBuilder()
     list.forEach{newnickStr.append("$it ")}
-    return newnickStr.toString().replace(Regex(" +")," ")
+    return newnickStr.toString().replace(Regex(" +")," ").trim()
 }
