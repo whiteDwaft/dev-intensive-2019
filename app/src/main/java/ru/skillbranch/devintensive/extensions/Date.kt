@@ -123,7 +123,7 @@ enum class TimeUnits{
     MINUTE,
     HOUR,
     DAY;
-    fun TimeUnits.plural(num:Int):String
+    fun plural(num:Int):String
     {
         val vocabulary:HashMap<String,Array<String>> = HashMap()
         vocabulary.put("DAY",arrayOf("день","дня","дней"))
