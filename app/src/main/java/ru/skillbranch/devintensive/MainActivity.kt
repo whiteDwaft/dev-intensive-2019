@@ -28,8 +28,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, TextView.OnEdito
     }
 
     override fun onClick(p0: View?) {
-        if (!this.isKeyboardOpen())
-            this.hideKeyboard()
         if(p0?.id == R.id.iv_send)
         {
             val (phrase,color) = benderObj.listenAnswer(messageEt.text.toString())
