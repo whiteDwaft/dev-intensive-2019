@@ -43,36 +43,36 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = NAME) 
         NAME("Как меня зовут?", listOf("бендер", "bender")) {
             override fun nextQuestion() = PROFESSION
             override fun validate(answer: String): String? =
-                if (answer.isEmpty() || !answer[0].isUpperCase()  )
+                if (!answer[0].isUpperCase())
                     "Имя должно начинаться с заглавной буквы\n"
                 else null
         },
         PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender")) {
             override fun nextQuestion() = MATERIAL
             override fun validate(answer: String): String? =
-                if (answer.isEmpty() || !answer[0].isLowerCase())
-                    "Профессия должна начинаться со строчной буквы"
+                if (!answer[0].isLowerCase())
+                    "Профессия должна начинаться со строчной буквы\n"
                 else null
         },
         MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "metal", "iron", "wood")) {
             override fun nextQuestion() = BDAY
             override fun validate(answer: String): String? =
-                if (answer.isEmpty() || answer.any { it.isDigit() })
-                    "Материал не должен содержать цифр"
+                if (answer.contains(Regex("\\d")))
+                    "Материал не должен содержать цифр\n"
                 else null
         },
         BDAY("Когда меня создали?", listOf("2993")) {
             override fun nextQuestion() = SERIAL
             override fun validate(answer: String): String? =
-                if (answer.isEmpty() || answer.all { !it.isDigit() })
-                    "Год моего рождения должен содержать только цифры"
+                if (answer.contains(Regex("\\D")))
+                    "Год моего рождения должен содержать только цифры\n"
                 else null
         },
         SERIAL("Мой серийный номер?", listOf("2716057")) {
             override fun nextQuestion() = IDLE
             override fun validate(answer: String): String? =
-                if (answer.isEmpty() || answer.all { !it.isDigit()} || answer.length == 7)
-                    "Серийный номер содержит только цифры, и их 7"
+                if (!Regex("\\d{7}").matches(answer))
+                    "Серийный номер содержит только цифры, и их 7\n"
                 else null
         },
         IDLE("На этом все, вопросов больше нет", listOf()) {
