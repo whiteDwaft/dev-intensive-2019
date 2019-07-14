@@ -18,16 +18,26 @@ import ru.skillbranch.devintensive.extensions.isKeyboardOpen
 import ru.skillbranch.devintensive.models.Bender
 
 class MainActivity : AppCompatActivity(),TextView.OnEditorActionListener, View.OnClickListener {
-    override fun onClick(p0: View?) {
-        sendAnswer()
+    override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
+        this.hideKeyboard()
+        val (phrase,color) = benderObj.listenAnswer(messageEt.text.toString())
+        messageEt.setText("")
+        val(r,g,b) = color
+        benderImage.setColorFilter(Color.rgb(r,g,b),PorterDuff.Mode.MULTIPLY)
+        textTxt.text = phrase
+        return true
     }
 
-    override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
-        if (p1 == EditorInfo.IME_ACTION_DONE) {
-            sendAnswer()
-            return true
-        } else {
-            return false
+    override fun onClick(p0: View?) {
+        if (!this.isKeyboardOpen())
+            this.hideKeyboard()
+        if(p0?.id == R.id.iv_send)
+        {
+            val (phrase,color) = benderObj.listenAnswer(messageEt.text.toString())
+            messageEt.setText("")
+            val(r,g,b) = color
+            benderImage.setColorFilter(Color.rgb(r,g,b),PorterDuff.Mode.MULTIPLY)
+            textTxt.text = phrase
         }
     }
 
