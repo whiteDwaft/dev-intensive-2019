@@ -24,12 +24,12 @@ class MainActivity : AppCompatActivity(),TextView.OnEditorActionListener, View.O
         messageEt.setText("")
         val(r,g,b) = color
         benderImage.setColorFilter(Color.rgb(r,g,b),PorterDuff.Mode.MULTIPLY)
-        textTxt.text = phrase
+        textTv.text = phrase
         return true
     }
 
     override fun onClick(p0: View?) {
-        if (!this.isKeyboardOpen())
+        if (this.isKeyboardOpen())
             this.hideKeyboard()
         if(p0?.id == R.id.iv_send)
         {
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(),TextView.OnEditorActionListener, View.O
             messageEt.setText("")
             val(r,g,b) = color
             benderImage.setColorFilter(Color.rgb(r,g,b),PorterDuff.Mode.MULTIPLY)
-            textTxt.text = phrase
+            textTv.text = phrase
         }
     }
 
@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity(),TextView.OnEditorActionListener, View.O
 
         textTv.text = benderObj.askQuestion()
         setBenderColor(benderObj.status.color)
+        textTv.setOnEditorActionListener(this)
+        sendBtn.setOnClickListener(this)
     }
 
     private fun sendAnswer() {
