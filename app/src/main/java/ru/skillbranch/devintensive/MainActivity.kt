@@ -17,7 +17,19 @@ import ru.skillbranch.devintensive.extensions.hideKeyboard
 import ru.skillbranch.devintensive.extensions.isKeyboardOpen
 import ru.skillbranch.devintensive.models.Bender
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),TextView.OnEditorActionListener, View.OnClickListener {
+    override fun onClick(p0: View?) {
+        sendAnswer()
+    }
+
+    override fun onEditorAction(p0: TextView?, p1: Int, p2: KeyEvent?): Boolean {
+        if (p1 == EditorInfo.IME_ACTION_DONE) {
+            sendAnswer()
+            return true
+        } else {
+            return false
+        }
+    }
 
     lateinit var benderImage: ImageView
     lateinit var textTv: TextView
@@ -40,19 +52,6 @@ class MainActivity : AppCompatActivity() {
 
         textTv.text = benderObj.askQuestion()
         setBenderColor(benderObj.status.color)
-        sendBtn.setOnClickListener { sendAnswer() }
-        messageEt.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE ||
-                event != null &&
-                event.action == KeyEvent.ACTION_DOWN &&
-                event.keyCode == KeyEvent.KEYCODE_ENTER
-            ) {
-                sendAnswer()
-                true
-            } else {
-                false
-            }
-        }
     }
 
     private fun sendAnswer() {
