@@ -1,5 +1,7 @@
 package ru.skillbranch.devintensive.utils
 
+import android.content.Context
+
 object Utils {
     fun parseFullName(fullname:String?):Pair<String?, String?>
     {
@@ -63,7 +65,27 @@ object Utils {
     }
 
 
-
+    fun repValidartion(rep:String):Boolean{
+        val exept = setOf(
+            "enterprise",
+            "features",
+            "topics",
+            "collections",
+            "trending",
+            "events",
+            "marketplace",
+            "pricing",
+            "nonprofit",
+            "customer-stories",
+            "security",
+            "login",
+            "join")
+        when (Regex("(https://|www.|https://www.|)?github.com/[a-zA-Z0-9]+").matches(rep))
+        {
+            false -> return false
+            else -> return !exept.any { rep.replaceFirst(Regex("(https://|www.|https://www.|)?github.com/"),"").endsWith(it) }
+        }
+    }
     fun toInitials(firstName: String?, lastName: String?): String? {
         var init:StringBuilder = StringBuilder()
         when(firstName?.trim()){
@@ -82,6 +104,21 @@ object Utils {
             return null
         else
             return init.toString()
+    }
+    fun convertDpToPx(context: Context, dp: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
+    }
+
+
+    fun convertPxToDp(context: Context, px: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (px / scale + 0.5f).toInt()
+    }
+
+
+    fun convertSpToPx(context: Context, sp: Int): Int {
+        return sp * context.resources.displayMetrics.scaledDensity.toInt()
     }
 
 }
