@@ -56,7 +56,6 @@
                     android:id="@+id/tv_nick_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="John Doe"
                     style="@style/Profile.Header.Nickname"
                     android:layout_below="@+id/iv_avatar"
                     android:layout_centerHorizontal="true"/>

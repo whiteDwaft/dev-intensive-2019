@@ -15,11 +15,13 @@ class ProfileViewModel : ViewModel() {
     private val profileData = MutableLiveData<Profile>()
     private val appTheme = MutableLiveData<Int>()
     private val repCheck = MutableLiveData<Boolean>()
+    private val repositoryError = MutableLiveData<Boolean>()
 
 
     fun getProfileData(): LiveData<Profile> = profileData
     fun getTheme(): LiveData<Int> = appTheme
     fun getRep(): LiveData<Boolean> = repCheck
+    fun getRepError():LiveData<Boolean> = repositoryError
 
     init {
         profileData.value = repository.getProfile()
@@ -42,5 +44,10 @@ class ProfileViewModel : ViewModel() {
             appTheme.value = AppCompatDelegate.MODE_NIGHT_YES
         }
         repository.saveAppTheme(appTheme.value!!)
+    }
+
+    fun onRepoEditCompleted(errorEnabled: Boolean) {
+        repositoryError.value = errorEnabled
+
     }
 }
