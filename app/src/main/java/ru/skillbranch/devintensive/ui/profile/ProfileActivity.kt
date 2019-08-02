@@ -7,6 +7,7 @@ import android.graphics.PorterDuffColorFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
@@ -51,15 +52,13 @@ class ProfileActivity : AppCompatActivity() {
 //    }
 
     private fun initViews(state: Bundle?) {
-        infoFields = mapOf(
+        viewFields = mapOf(
+            "nickName" to tv_nick_name,
+            "rank" to tv_rank,
             "firstName" to et_first_name,
             "lastName" to et_last_name,
             "about" to et_about,
-            "repository" to et_repository
-        )
-        viewFields = infoFields + mapOf(
-            "nickName" to tv_nick_name,
-            "rank" to tv_rank,
+            "repository" to et_repository,
             "rating" to tv_rating,
             "respect" to tv_respect
         )
@@ -115,25 +114,24 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun showCurrentMode(isEdit: Boolean) {
-        for ((_, v) in infoFields) {
+        val info = viewFields.filter { setOf("firstName", "lastName", "about", "repository").contains(it.key) }
+        for ((_, v) in info) {
+            v as EditText
             v.isFocusable = isEdit
             v.isFocusableInTouchMode = isEdit
             v.isEnabled = isEdit
             v.background.alpha = if (isEdit) 255 else 0
         }
+
         ic_eye.visibility = if (isEdit) View.GONE else View.VISIBLE
         wr_about.isCounterEnabled = isEdit
 
         with(btn_edit) {
             val filter: ColorFilter? = if (isEdit) {
-                PorterDuffColorFilter(
-                    resources.getColor(R.color.color_accent, theme),
-                    PorterDuff.Mode.SRC_IN
-                )
+                PorterDuffColorFilter(getThemeAccentColor(), PorterDuff.Mode.SRC_IN)
             } else {
                 null
             }
-
             val icon = if (isEdit) {
                 resources.getDrawable(R.drawable.ic_save_black_24dp, theme)
             } else {
@@ -144,6 +142,12 @@ class ProfileActivity : AppCompatActivity() {
             setImageDrawable(icon)
         }
     }
+    private fun getThemeAccentColor(): Int {
+        val value = TypedValue()
+        theme.resolveAttribute(R.attr.colorAccent, value, true)
+        return value.data
+    }
+
 
     private fun saveProfileInfo(){
         viewModel.saveProfileData(Profile(
