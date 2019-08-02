@@ -7,6 +7,8 @@ import android.graphics.PorterDuffColorFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
@@ -76,7 +78,16 @@ class ProfileActivity : AppCompatActivity() {
         btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
         }
+        et_repository.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.onRepositoryChanged(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
+
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
@@ -104,7 +115,8 @@ class ProfileActivity : AppCompatActivity() {
     }
     private fun updateError(status:Boolean)
     {
-        wr_repository.error = if(!status) "Невалидный адрес репозитория" else null
+        wr_repository.isErrorEnabled = status
+        wr_repository.error = if(status) "Невалидный адрес репозитория" else null
     }
     private fun updateAvatar(profile: Profile) {
         val initials = Utils.toInitials(profile.firstName, profile.lastName)
@@ -150,13 +162,14 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun saveProfileInfo(){
-        viewModel.saveProfileData(Profile(
-                firstName = et_first_name.text.toString(),
-                lastName = et_last_name.text.toString(),
-                about = et_about.text.toString(),
-                repository = et_repository.text.toString()
-            )
-        )
+        Profile(
+            firstName = et_first_name.text.toString(),
+            lastName = et_last_name.text.toString(),
+            about = et_about.text.toString(),
+            repository = et_repository.text.toString()
+        ).apply {
+            viewModel.saveProfileData(this)
+        }
     }
 
     companion object {

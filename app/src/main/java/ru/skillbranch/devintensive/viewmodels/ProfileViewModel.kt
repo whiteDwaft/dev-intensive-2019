@@ -31,10 +31,8 @@ class ProfileViewModel : ViewModel() {
 
 
     fun saveProfileData(profile: Profile) {
-        val newProf = if(!Utils.repValidartion(profile.repository)) profile.copy(repository = "") else profile
-        repository.saveProfile(newProf)
-        profileData.value = newProf
-        repCheck.value = Utils.repValidartion(profile.repository)
+        repository.saveProfile(profile)
+        profileData.value = profile
     }
 
     fun switchTheme() {
@@ -49,5 +47,11 @@ class ProfileViewModel : ViewModel() {
     fun onRepoEditCompleted(errorEnabled: Boolean) {
         repositoryError.value = errorEnabled
 
+    }
+    fun onRepositoryChanged(repository: String) {
+        repCheck.value = !isValidateRepository(repository)
+    }
+    private fun isValidateRepository(repo: String): Boolean {
+        return Utils.repValidartion(repo)
     }
 }
