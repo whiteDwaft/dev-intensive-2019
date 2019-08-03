@@ -15,7 +15,7 @@ object Utils {
         return firstName to lastName
     }
 
-    fun transliteration(payload: String,divider:String = " "): String {
+    fun transliteration(payload: String,divider:String = " "): String? {
         val alphavit: HashMap<String, String> = hashMapOf(
             "а" to "a",
             "б" to "b",
@@ -65,27 +65,23 @@ object Utils {
     }
 
 
-    fun repValidartion(rep:String):Boolean{
-        val exept = setOf(
-            "enterprise",
-            "features",
-            "topics",
-            "collections",
-            "trending",
-            "events",
-            "marketplace",
-            "pricing",
-            "nonprofit",
-            "customer-stories",
-            "security",
-            "login",
-            "join")
-        when (Regex("(https://|www.|https://www.|)?github.com/[a-zA-Z0-9]+").matches(rep))
-        {
-            false -> return false
-            else -> return !exept.any { rep.replaceFirst(Regex("(https://|www.|https://www.|)?github.com/"),"").endsWith(it) }
-        }
-    }
+    fun repValidartion(repo:String):Boolean= repo.isEmpty() || repo.matches(
+        Regex("^(https://){0,1}(www.){0,1}github.com\\/[A-z\\d](?:[A-z\\d]|(_|-)(?=[A-z\\d])){0,256}(/)?\$",RegexOption.IGNORE_CASE)) &&
+            !repo.matches(Regex("^.*(" +
+                    "\\/enterprise|" +
+                    "\\/features|" +
+                    "\\/topics|" +
+                    "\\/collections|" +
+                    "\\/trending|" +
+                    "\\/events|" +
+                    "\\/marketplace" +
+                    "|\\/pricing|" +
+                    "\\/nonprofit|" +
+                    "\\/customer-stories|" +
+                    "\\/security|" +
+                    "\\/login|" +
+                    "\\/join)\$",RegexOption.IGNORE_CASE)
+            )
     fun toInitials(firstName: String?, lastName: String?): String? {
         var init:StringBuilder = StringBuilder()
         when(firstName?.trim()){
