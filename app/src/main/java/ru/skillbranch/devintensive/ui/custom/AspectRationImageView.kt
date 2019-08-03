@@ -10,6 +10,9 @@ class AspectRatioImageView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ImageView(context, attrs, defStyleAttr) {
+    companion object {
+        private const val DEFAULT_ASPECT_RATIO = 1.78f
+    }
 
     private var aspectRatio = DEFAULT_ASPECT_RATIO
 
@@ -23,11 +26,7 @@ class AspectRatioImageView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val newHeight = (measuredWidth / aspectRatio).toInt()
-        setMeasuredDimension(measuredWidth, newHeight)
-    }
-
-    companion object {
-        private const val DEFAULT_ASPECT_RATIO = 1.78f
+        val newHight = (measuredWidth / aspectRatio).toInt()
+        setMeasuredDimension(measuredWidth, newHight)
     }
 }
