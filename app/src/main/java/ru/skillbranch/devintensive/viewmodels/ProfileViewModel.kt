@@ -9,6 +9,7 @@ import ru.skillbranch.devintensive.models.Profile
 import ru.skillbranch.devintensive.repositories.PreferencesRepository
 import ru.skillbranch.devintensive.utils.Utils
 
+
 class ProfileViewModel : ViewModel() {
     private val repository: PreferencesRepository = PreferencesRepository
     private val profileData = MutableLiveData<Profile>()
@@ -57,6 +58,9 @@ class ProfileViewModel : ViewModel() {
     }
 
     private fun isValidateRepository(repo: String): Boolean {
-        return Utils.repValidartion(repo)
+        return Utils.isValidateRepository(repo)
     }
+
+
+
 }

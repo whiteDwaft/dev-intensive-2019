@@ -1,29 +1,21 @@
 package ru.skillbranch.devintensive.ui.profile
 
-import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.util.TypedValue
-import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.skillbranch.devintensive.R
-import ru.skillbranch.devintensive.extensions.hideKeyboard
-import ru.skillbranch.devintensive.extensions.isKeyboardOpen
-import ru.skillbranch.devintensive.models.Bender
 import ru.skillbranch.devintensive.models.Profile
 import ru.skillbranch.devintensive.utils.Utils
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
@@ -132,7 +124,7 @@ class ProfileActivity : AppCompatActivity() {
             val icon = if (isEdit) {
                 resources.getDrawable(R.drawable.ic_save_black_24dp, theme)
             } else {
-                resources.getDrawable(R.drawable.ic_edit_day_night, theme)
+                resources.getDrawable(R.drawable.ic_edit_black_24dp, theme)
             }
 
             background.colorFilter = filter
@@ -172,3 +164,5 @@ class ProfileActivity : AppCompatActivity() {
         wr_repository.error = if (isError) "Невалидный адрес репозитория" else ""
     }
 }
+
+

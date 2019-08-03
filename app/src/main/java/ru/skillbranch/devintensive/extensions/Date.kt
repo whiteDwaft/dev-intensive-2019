@@ -2,139 +2,156 @@ package ru.skillbranch.devintensive.extensions
 
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 const val SECOND = 1000L
 const val MINUTE = 60 * SECOND
 const val HOUR = 60 * MINUTE
 const val DAY = 24 * HOUR
 
-fun Date.format(pattern:String="HH:mm:ss dd.MM.yy"):String{
-    val dateFormat = SimpleDateFormat(pattern,Locale("ru"))
+fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
+    val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
     return dateFormat.format(this)
 }
-fun Date.add(value:Int, units: TimeUnits = TimeUnits.SECOND):Date{
+
+
+fun Date.add(value: Int, units: TimeUnits = TimeUnits.SECOND): Date {
     var time = this.time
+
     time += when(units){
         TimeUnits.SECOND -> value * SECOND
         TimeUnits.MINUTE -> value * MINUTE
         TimeUnits.HOUR -> value * HOUR
         TimeUnits.DAY -> value * DAY
-
     }
     this.time = time
     return this
 }
 
-fun Date.humanizeDiff(date: Date = Date()): String {
-    val diff:Long = date.time - this.time
-    val map:HashMap<String,Long> = HashMap()
-    map.put("YEARS", Math.abs(diff)/1000/60/60/24/365)
-    map.put("DAYS",Math.abs(diff)/1000/60/60/24)
-    map.put("HOURS", Math.abs(diff)/1000/60/60)
-    map.put("MINUTES",Math.abs(diff)/1000/60)
-    map.put("SECONDS",Math.abs(diff)/1000)
-
-    val vocabulary:HashMap<String,Array<String>> = HashMap()
-    vocabulary.put("YEARS",arrayOf("год","года","лет"))
-    vocabulary.put("DAYS",arrayOf("день","дня","дней"))
-    vocabulary.put("HOURS",arrayOf("час","часа","часов"))
-    vocabulary.put("MINUTES",arrayOf("минуту","минуты","минут"))
-    vocabulary.put("SECONDS",arrayOf("секунду","секунды","секунд"))
-
-    val min:Map.Entry<String, Long>? = map.filter { (_,item:Long) -> item != 0L}.minBy { (_,item:Long) -> item}
-    if(diff > 0) {
-        when (min!!.key) {
-            "SECONDS" -> when (min.value) {
-                in 0L..1L -> return "только что"
-                in 2L..45L -> return "несколько секунд назад"
-                else -> return "минуту назад"
-            }
-            "MINUTES" -> when (min.value) {
-                1L -> if(map.get("SECONDS")!! <= 75) return "минуту назад" else return "1 минуту назад"
-                in 2L..45L -> when (min.value % 10) {
-                    1L -> return "${min.value} ${vocabulary.get(min.key)?.get(0)} назад"
-                    in 2L..4L -> return "${min.value} ${vocabulary.get(min.key)?.get(1)} назад"
-                    else -> return "${min.value} ${vocabulary.get(min.key)?.get(2)} назад"
-                }
-                else -> return "час назад"
-            }
-            "HOURS" -> when (min.value) {
-                1L -> if(map.get("MINUTES")!! <= 75) return "час назад" else return "1 час назад"
-                in 2L..22L -> when (min.value % 10) {
-                    1L -> return "${min.value} ${vocabulary.get(min.key)?.get(0)} назад"
-                    in 2L..4L -> return "${min.value} ${vocabulary.get(min.key)?.get(1)} назад"
-                    else -> return "${min.value} ${vocabulary.get(min.key)?.get(2)} назад"
-                }
-                else -> return "день назад"
-            }
-            "DAYS" -> when (min.value) {
-                1L -> if(map.get("HOURS")!! <= 26) return "день назад" else return "1 день назад"
-                in 2L..360L -> when (min.value % 10) {
-                    1L -> return "${min.value} ${vocabulary.get(min.key)?.get(0)} назад"
-                    in 2L..4L -> return "${min.value} ${vocabulary.get(min.key)?.get(1)} назад"
-                    else -> return "${min.value} ${vocabulary.get(min.key)?.get(2)} назад"
-                }
-                else -> return "более года назад"
-            }
-            else -> return "более года назад"
-        }
-    }
-    else {
-        when (min!!.key) {
-            "SECONDS" -> when (min.value) {
-                in 0L..1L -> return "только что"
-                in 2L..45L -> return "через несколько секунд "
-                else -> return "через минуту "
-            }
-            "MINUTES" -> when (min.value) {
-                1L -> if(map.get("SECONDS")!! <= 75) return "через минуту" else return "через 1 минуту"
-                in 2L..45L -> when (min.value % 10) {
-                    1L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(0)}"
-                    in 2L..4L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(1)}"
-                    else -> return "через ${min.value} ${vocabulary.get(min.key)?.get(2)}"
-                }
-                else -> return "через час"
-            }
-            "HOURS" -> when (min.value) {
-                1L -> if(map.get("MINUTES")!! <= 75) return "через час" else return "через 1 час"
-                in 2L..22L -> when (min.value % 10) {
-                    1L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(0)}"
-                    in 2L..4L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(1)}"
-                    else -> return "через ${min.value} ${vocabulary.get(min.key)?.get(2)}"
-                }
-                else -> return "через день"
-            }
-            "DAYS" -> when (min.value) {
-                1L -> if(map.get("HOURS")!! <= 26) return "через день" else return "через 1 день"
-                in 2L..360L -> when (min.value % 10) {
-                    1L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(0)}"
-                    in 2L..4L -> return "через ${min.value} ${vocabulary.get(min.key)?.get(1)}"
-                    else -> return "через ${min.value} ${vocabulary.get(min.key)?.get(2)}"
-                }
-                else -> return "больше чем через год"
-            }
-            else -> return "более года назад"
-        }
-    }
-}
 enum class TimeUnits{
     SECOND,
     MINUTE,
     HOUR,
     DAY;
-    fun plural(num:Int):String
-    {
-        val vocabulary:HashMap<String,Array<String>> = HashMap()
-        vocabulary.put("DAY",arrayOf("день","дня","дней"))
-        vocabulary.put("HOUR",arrayOf("час","часа","часов"))
-        vocabulary.put("MINUTE",arrayOf("минуту","минуты","минут"))
-        vocabulary.put("SECOND",arrayOf("секунду","секунды","секунд"))
-        when(num%10)
-        {
-            1 -> return "$num ${vocabulary.get(this.name)!![0]}"
-            in 2..4 -> return "$num ${vocabulary.get(this.name)!![1]}"
-            else -> return "$num ${vocabulary.get(this.name)!![2]}"
+
+    fun plural(value: Int): String{
+        val strValues = mapOf(
+            SECOND to "секунд секунду секунды",
+            MINUTE to "минут минуту минуты",
+            HOUR to "часов час часа",
+            DAY to "дней день дня"
+        )
+        var variant = 0
+        when(value.toString().substring(value.toString().length-1).toInt()){
+            1 -> variant = 1
+            in (2..4) -> variant = 2
         }
+        if(value in (11..14)) variant = 0
+        return value.toString() + " " + strValues[this]!!.split(" ")[variant]
     }
 }
+
+fun Date.humanizeDiff(date: Date = Date()): String{
+    val diff: Long
+    if(date.time == Date().time){
+        //сравниваем с внутренним состоянием
+        diff = this.time - Date().time
+    }
+    else{
+        //сравниваем с заданным в параметре
+        diff = date.getTime() - Date().time
+    }
+
+    if(diff < 0){
+        when(diff){
+            in -1*1000..0 -> return("только что")
+            in -45*1000..-1*1000+1 -> return("несколько секунд назад")
+            in -75*1000..-45*1000+1 -> return("минуту назад")
+            in -45*60*1000..-75*1000+1 -> {
+                val min: Int = -(diff/1000/60).toInt()
+                var minText = "минут"
+                when(min.toString().substring(min.toString().length-1).toInt()){
+                    1 -> minText = "минута"
+                    in (2..4) -> minText = "минуты"
+                }
+                if(min in (11..14)) minText = "минут"
+                return("$min $minText назад")
+            }
+            in -75*60*1000..-45*60*1000+1 -> return("час назад")
+            in -22*60*60*1000..-75*60*1000+1 -> {
+                val hours: Int = -(diff/1000/60/60).toInt()
+                var hourText = "часов"
+                when(hours.toString().substring(hours.toString().length-1).toInt()){
+                    1 -> hourText = "час"
+                    in (2..4) -> hourText = "часа"
+                }
+                if(hours in (11..14)) hourText = "часов"
+                return("$hours $hourText назад")
+            }
+            in -26*60*60*1000..-22*60*60*1000+1 -> return("день назад")
+            in -360*24*60*60*1000..-26*60*60*1000+1 -> {
+                val days: Int = -(diff/1000/60/60/24).toInt()
+                var daysText = "дней"
+                when(days.toString().substring(days.toString().length-1,1).toInt()){
+                    1 -> daysText = "день"
+                    in (2..4) -> daysText = "дня"
+                }
+                if(days in (11..14)) daysText = "дней"
+                return("$days $daysText назад")
+            }
+            else -> return("более года назад")
+        }
+    }
+    else{
+        when(diff){
+            in 0..1*1000 -> return("только что")
+            in 1*1000+1..45*1000 -> return("через несколько секунд")
+            in 45*1000+1..75*1000 -> return("через минуту")
+            in 75*1000+1..45*60*1000 -> {
+                val min: Int = (diff/1000/60).toInt()
+                var minText = "минут"
+                when(min.toString().substring(min.toString().length-1).toInt()){
+                    1 -> minText = "минута"
+                    in (2..4) -> minText = "минуты"
+                }
+                if(min in (11..14)) minText = "минут"
+                return("через $min $minText")
+            }
+            in 45*60*1000..75*60*1000 -> return("через час")
+            in 75*60*1000+1..22*60*60*1000 -> {
+                val hours: Int = (diff/1000/60/60).toInt()
+                var hourText = "часов"
+                when(hours.toString().substring(hours.toString().length-1).toInt()){
+                    1 -> hourText = "час"
+                    in (2..4) -> hourText = "часа"
+                }
+                if(hours in (11..14)) hourText = "часов"
+                return("через $hours $hourText")
+            }
+            in 22*60*60*1000+1..26*60*60*1000 -> return("через день")
+            in 26*60*60*1000+1..360*24*60*60*1000 -> {
+                val days: Int = (diff/1000/60/60/24).toInt()
+                var daysText = "дней"
+                when(days.toString().substring(days.toString().length-1).toInt()){
+                    1 -> daysText = "день"
+                    in (2..4) -> daysText = "дня"
+                }
+                if(days in (11..14)) daysText = "дней"
+                return("через $days $daysText")
+            }
+            else -> return("через год и более")
+        }
+    }
+
+}
+
+/*
+0с - 1с "только что"
+1с - 45с "несколько секунд назад", "через несколько секунд"
+45с - 75с "минуту назад", "через минуту"
+75с - 45мин "N минут назад", "через N минут"
+45мин - 75мин "час назад", "через час"
+75мин 22ч "N часов назад", "через N часов"
+22ч - 26ч "день назад", "через день"
+26ч - 360д "N дней назад", "через N дней"
+>360д "более года назад", "через год и более"
+*/

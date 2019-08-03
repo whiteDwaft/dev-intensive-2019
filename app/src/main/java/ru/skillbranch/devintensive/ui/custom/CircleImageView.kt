@@ -58,7 +58,6 @@ class CircleImageView @JvmOverloads constructor (
         this.invalidate()
     }
 
-
     override fun onDraw(canvas: Canvas) {
         var bitmap = getBitmapFromDrawable() ?: return
         if (width == 0 || height == 0) return
@@ -72,6 +71,7 @@ class CircleImageView @JvmOverloads constructor (
 
         canvas.drawBitmap(bitmap, 0F, 0F, null)
     }
+
     fun generateAvatar(text: String?, sizeSp: Int, theme: Resources.Theme){
         /* don't render if initials haven't changed */
         if (bitmap == null || text != this.text){
@@ -110,7 +110,7 @@ class CircleImageView @JvmOverloads constructor (
     }
 
     private fun getDefaultAvatar(theme: Resources.Theme): Bitmap {
-        val image = Bitmap.createBitmap(layoutParams.height, layoutParams.height, Bitmap.Config.ARGB_8888)
+        val image = Bitmap.createBitmap(layoutParams.height, layoutParams.height, Config.ARGB_8888)
         val color = TypedValue()
         theme.resolveAttribute(R.attr.colorAccent, color, true)
 
@@ -163,7 +163,7 @@ class CircleImageView @JvmOverloads constructor (
         if (drawable is BitmapDrawable)
             return (drawable as BitmapDrawable).bitmap
 
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
@@ -173,7 +173,7 @@ class CircleImageView @JvmOverloads constructor (
 
     private fun getCircleBitmap(bitmap: Bitmap): Bitmap {
         val smallest = min(bitmap.width, bitmap.height)
-        val outputBmp = Bitmap.createBitmap(smallest, smallest, Bitmap.Config.ARGB_8888)
+        val outputBmp = Bitmap.createBitmap(smallest, smallest, Config.ARGB_8888)
         val canvas = Canvas(outputBmp)
 
         val paint = Paint()
@@ -185,10 +185,9 @@ class CircleImageView @JvmOverloads constructor (
         canvas.drawARGB(0, 0, 0, 0)
         canvas.drawCircle(smallest / 2F, smallest / 2F, smallest / 2F, paint)
 
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        paint.xfermode = PorterDuffXfermode(Mode.SRC_IN)
         canvas.drawBitmap(bitmap, rect, rect, paint)
 
         return outputBmp
     }
-
 }
