@@ -206,7 +206,8 @@
                 android:id="@+id/wr_about"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/spacing_normal_16">
+                android:layout_marginLeft="@dimen/spacing_normal_16"
+                app:counterMaxLength="128">
 
             <EditText
                     android:id="@+id/et_about"

@@ -10,25 +10,29 @@ import ru.skillbranch.devintensive.repositories.PreferencesRepository
 import ru.skillbranch.devintensive.utils.Utils
 
 class ProfileViewModel : ViewModel() {
-
-    private val repository = PreferencesRepository
+    private val repository: PreferencesRepository = PreferencesRepository
     private val profileData = MutableLiveData<Profile>()
     private val appTheme = MutableLiveData<Int>()
-    private val repCheck = MutableLiveData<Boolean>()
     private val repositoryError = MutableLiveData<Boolean>()
-
-
-    fun getProfileData(): LiveData<Profile> = profileData
-    fun getTheme(): LiveData<Int> = appTheme
-    fun getRep(): LiveData<Boolean> = repCheck
-    fun getRepError():LiveData<Boolean> = repositoryError
+    private val isRepoError = MutableLiveData<Boolean>()
 
     init {
+        Log.d("M_ProfileViewModel", "init view model")
         profileData.value = repository.getProfile()
         appTheme.value = repository.getAppTheme()
     }
 
+    override fun onCleared() {
+        super.onCleared()
+    }
 
+    fun getProfileData(): LiveData<Profile> = profileData
+
+    fun getTheme(): LiveData<Int> = appTheme
+
+    fun getRepositoryError(): LiveData<Boolean> = repositoryError
+
+    fun getIsRepoError(): LiveData<Boolean> = isRepoError
 
     fun saveProfileData(profile: Profile) {
         repository.saveProfile(profile)
@@ -44,13 +48,14 @@ class ProfileViewModel : ViewModel() {
         repository.saveAppTheme(appTheme.value!!)
     }
 
-    fun onRepoEditCompleted(errorEnabled: Boolean) {
-        repositoryError.value = errorEnabled
-
-    }
     fun onRepositoryChanged(repository: String) {
-        repCheck.value = !isValidateRepository(repository)
+        repositoryError.value = !isValidateRepository(repository)
     }
+
+    fun onRepoEditCompleted(isError: Boolean) {
+        isRepoError.value = isError
+    }
+
     private fun isValidateRepository(repo: String): Boolean {
         return Utils.repValidartion(repo)
     }

@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
@@ -29,11 +30,13 @@ import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
 
 class ProfileActivity : AppCompatActivity() {
 
-    private var isEditMode = false
+    companion object {
+        const val IS_EDIT_MODE = "IS_EDIT_MODE"
+    }
 
-    private lateinit var infoFields: Map<String, EditText>
-    private lateinit var viewFields: Map<String, TextView>
     private lateinit var viewModel: ProfileViewModel
+    var isEditMode = false
+    lateinit var viewFields: Map<String, TextView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
@@ -48,62 +51,16 @@ class ProfileActivity : AppCompatActivity() {
         outState.putBoolean(IS_EDIT_MODE, isEditMode)
     }
 
-//    override fun onSaveInstanceState(outState: Bundle?) {
-//        super.onSaveInstanceState(outState)
-//        outState?.putBoolean(IS_EDIT_MODE, isEditMode)
-//    }
-
-    private fun initViews(state: Bundle?) {
-        viewFields = mapOf(
-            "nickName" to tv_nick_name,
-            "rank" to tv_rank,
-            "firstName" to et_first_name,
-            "lastName" to et_last_name,
-            "about" to et_about,
-            "repository" to et_repository,
-            "rating" to tv_rating,
-            "respect" to tv_respect
-        )
-
-        isEditMode = state?.getBoolean(IS_EDIT_MODE, false) ?: false
-        showCurrentMode(isEditMode)
-
-        btn_edit.setOnClickListener {
-            viewModel.onRepoEditCompleted(wr_repository.isErrorEnabled)
-            if (isEditMode) saveProfileInfo()
-            isEditMode = !isEditMode
-            showCurrentMode(isEditMode)
-        }
-
-        btn_switch_theme.setOnClickListener {
-            viewModel.switchTheme()
-        }
-        et_repository.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.onRepositoryChanged(s.toString())
-            }
-        })
-    }
-
-
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
         viewModel.getProfileData().observe(this, Observer { updateUI(it) })
         viewModel.getTheme().observe(this, Observer { updateTheme(it) })
-        viewModel.getRep().observe(this, Observer { updateError(it) })
-        viewModel.getRepError().observe(this, Observer { updateRepository(it) })
-    }
-
-    private fun updateRepository(it: Boolean) {
-        if (it) et_repository.text.clear()
+        viewModel.getRepositoryError().observe(this, Observer { updateRepoError(it) })
+        viewModel.getIsRepoError().observe(this, Observer { updateRepository(it) })
     }
 
     private fun updateTheme(mode: Int) {
+        Log.d("M_ProfileActivity", "updateTheme")
         delegate.setLocalNightMode(mode)
     }
 
@@ -115,17 +72,43 @@ class ProfileActivity : AppCompatActivity() {
         }
         updateAvatar(profile)
     }
-    private fun updateError(status:Boolean)
-    {
-        wr_repository.isErrorEnabled = status
-        wr_repository.error = if(status) "Невалидный адрес репозитория" else null
-    }
-    private fun updateAvatar(profile: Profile) {
-        val initials = Utils.toInitials(profile.firstName, profile.lastName)
-        iv_avatar.generateAvatar(initials, Utils.convertSpToPx(this, 48), theme)
 
-    }
+    private fun initViews(savedInstanceState: Bundle?) {
+        viewFields = mapOf(
+            "nickName" to tv_nick_name,
+            "rank" to tv_rank,
+            "firstName" to et_first_name,
+            "lastName" to et_last_name,
+            "about" to et_about,
+            "repository" to et_repository,
+            "rating" to tv_rating,
+            "respect" to tv_respect
+        )
 
+        isEditMode = savedInstanceState?.getBoolean(IS_EDIT_MODE, false) ?: false
+        showCurrentMode(isEditMode)
+
+        btn_edit.setOnClickListener {
+            viewModel.onRepoEditCompleted(wr_repository.isErrorEnabled)
+
+            if (isEditMode) saveProfileInfo()
+            isEditMode = !isEditMode
+            showCurrentMode(isEditMode)
+        }
+
+        btn_switch_theme.setOnClickListener {
+            viewModel.switchTheme()
+        }
+
+        et_repository.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.onRepositoryChanged(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
 
     private fun showCurrentMode(isEdit: Boolean) {
         val info = viewFields.filter { setOf("firstName", "lastName", "about", "repository").contains(it.key) }
@@ -156,14 +139,8 @@ class ProfileActivity : AppCompatActivity() {
             setImageDrawable(icon)
         }
     }
-    private fun getThemeAccentColor(): Int {
-        val value = TypedValue()
-        theme.resolveAttribute(R.attr.colorAccent, value, true)
-        return value.data
-    }
 
-
-    private fun saveProfileInfo(){
+    private fun saveProfileInfo() {
         Profile(
             firstName = et_first_name.text.toString(),
             lastName = et_last_name.text.toString(),
@@ -174,8 +151,24 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        const val IS_EDIT_MODE = "IS_EDIT_MODE"
+    private fun getThemeAccentColor(): Int {
+        val value = TypedValue()
+        theme.resolveAttribute(R.attr.colorAccent, value, true)
+        return value.data
+    }
+
+    private fun updateAvatar(profile: Profile) {
+        val initials = Utils.toInitials(profile.firstName, profile.lastName)
+        iv_avatar.generateAvatar(initials, Utils.convertSpToPx(this, 48), theme)
+
+    }
+
+    private fun updateRepository(isError: Boolean) {
+        if (isError) et_repository.text.clear()
+    }
+
+    private fun updateRepoError(isError: Boolean) {
+        wr_repository.isErrorEnabled = isError
+        wr_repository.error = if (isError) "Невалидный адрес репозитория" else ""
     }
 }
-
